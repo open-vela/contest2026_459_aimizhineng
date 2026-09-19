@@ -31,6 +31,7 @@ openvela 主控侧亮点：
 - `app/hifoss/`          — 主控应用：UART 指令解析、ESP8266 AT、OLED 显示（映射到 `packages/demos/contest2026_459_hifoss`）
 - `board/gd32f470v_start/` — GD32F470ZE MCU 板级适配：defconfig、链接脚本、板级初始化与 GPIO 注册（映射到 `vendor/openvela/boards/contest2026_459_gd32f470v_start`）
 - `logs/`                — AI Coding 日志（见 logs/README.md）
+- `.trae/skills/`        — 项目沉淀的 AI 技能：`gd32-vela-port-check`（GD32 移植检查清单）、`word-report-generator`（Word 报告生成）
 - `contest2026_459_aimizhineng.xml` — repo manifest（含上述 linkfile 映射）
 
 ## 四、运行方式
@@ -62,10 +63,54 @@ repo sync -c -j8
 | 信号 | 引脚 | 说明 |
 | ---- | ---- | ---- |
 | 控制台 USART0 | PA9(TX) / PA10(RX) | 115200 8N1，NSH Shell |
-| 指令 UART3 | PB10(TX) / PB11(RX) | 115200，接 WS63 网关 |
+| 指令 UART3 | PC10(TX) / PC11(RX) | 115200，接 WS63 网关 |
 | OLED SPI0 | PA5(SCK) PA7(MOSI) PA4(CS) PA6(DC) PA1(RES) | SSD1306 |
 
 上电后 OLED 显示系统状态，NSH 控制台输入 `hifoss` 启动应用（defconfig 已配置为内置应用）；语音唤醒后云端下发指令，网关执行对应外设动作并在 OLED 上刷新状态。
+
+### 4. 串口运行日志（实测）
+
+以下为一次完整语音控制会话的 USART0 控制台实测输出：
+
+```text
+NuttShell (NSH)
+nsh> hifoss
+voice uart ready!
+g_recv_length:9 g_recv_buff:+WAKEUP
+g_recv_length:12 g_recv_buff:+VAD:START
+g_recv_length:10 g_recv_buff:+VAD:END
+g_recv_length:9 g_recv_buff:+LED:ON
+led: on (vad_end=1560ms vad_start=2370ms)
+[URC_TIMING] exec=330us min=330us max=330us avg=330us n=1
+g_recv_length:12 g_recv_buff:+VAD:START
+g_recv_length:10 g_recv_buff:+VAD:END
+g_recv_length:9 g_recv_buff:+FAN:ON
+fan: on (vad_end=1480ms vad_start=2350ms)
+[URC_TIMING] exec=334us min=330us max=334us avg=332us n=2
+g_recv_length:12 g_recv_buff:+VAD:START
+g_recv_length:10 g_recv_buff:+VAD:END
+g_recv_length:10 g_recv_buff:+LED:OFF
+led: off (vad_end=1530ms vad_start=2290ms)
+[URC_TIMING] exec=340us min=330us max=340us avg=334us n=3
+g_recv_length:12 g_recv_buff:+VAD:START
+g_recv_length:12 g_recv_buff:+VAD:START
+g_recv_length:10 g_recv_buff:+VAD:END
+g_recv_length:10 g_recv_buff:+FAN:OFF
+fan: off (vad_end=1590ms vad_start=2570ms)
+[URC_TIMING] exec=345us min=330us max=345us avg=337us n=4
+g_recv_length:14 g_recv_buff:+EXIT_WAKEUP
+g_recv_length:9 g_recv_buff:+WAKEUP
+g_recv_length:12 g_recv_buff:+VAD:START
+g_recv_length:10 g_recv_buff:+VAD:END
+g_recv_length:14 g_recv_buff:+EXIT_WAKEUP
+```
+
+日志关键行说明：
+
+- `+WAKEUP` / `+EXIT_WAKEUP`：CI130x 语音前端的唤醒 / 退出唤醒事件。
+- `+VAD:START` / `+VAD:END`：语音端点检测（说话开始 / 结束），`vad_start`/`vad_end` 为相对唤醒时刻的毫秒时间戳。
+- `+LED:ON` 等：云端理解后经 WS63 由 UART3 下发的控制指令，hifoss 以 `\n` 即时成帧解析并执行 GPIO 动作（`led: on` 等回显）。
+- `[URC_TIMING]`：基于 DWT 周期计数器的指令执行耗时统计，实测 4 次指令执行延迟 330~345µs，平均 337µs。
 
 ## 五、AI Coding 使用说明
 
