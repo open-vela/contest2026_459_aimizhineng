@@ -1,0 +1,28 @@
+#
+# HiFOSS WiFi + OLED demo (GD32F470V-START)
+#
+
+config EXAMPLES_HIFOSS
+	tristate "HiFOSS WiFi OLED demo"
+	default n
+	depends on SPI_DRIVER && DEV_GPIO
+	---help---
+		HiFOSS demo ported from the GD32F470 bare-metal project:
+		SSD1306 OLED on SPI0 (SCK=PA5 MOSI=PA7 CS=PA4 DC=PA6 RES=PA1)
+		and ESP8266 AT/MQTT on USART1 (TX=PA2 RX=PA3).
+
+if EXAMPLES_HIFOSS
+
+config EXAMPLES_HIFOSS_PROGNAME
+	string "Program name"
+	default "hifoss"
+
+config EXAMPLES_HIFOSS_PRIORITY
+	int "Task priority"
+	default 100
+
+config EXAMPLES_HIFOSS_STACKSIZE
+	int "Stack size"
+	default 4096
+
+endif # EXAMPLES_HIFOSS

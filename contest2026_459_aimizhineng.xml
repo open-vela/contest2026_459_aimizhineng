@@ -9,8 +9,7 @@
   <include name="openvela.xml"/>
 
   <project path="contest2026_459_aimizhineng" name="contest2026_459_aimizhineng">
-    <linkfile src="app/hello_app" dest="packages/demos/contest2026_459_hello_app"/>
-    <linkfile src="quickapp/hello_quickapp" dest="packages/apps/contest2026_459_hello_quickapp"/>
-    <linkfile src="board/contest_board" dest="vendor/openvela/boards/contest2026_459_board"/>
+    <linkfile src="app/hifoss" dest="packages/demos/contest2026_459_hifoss"/>
+    <linkfile src="board/gd32f470v_start" dest="vendor/openvela/boards/contest2026_459_gd32f470v_start"/>
   </project>
 </manifest>
