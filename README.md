@@ -2,7 +2,7 @@
 
 ## 一、作品简介
 
-VelaGate 是一个基于 openvela（NuttX 系 RTOS）的语音控制智能网关，运行在 GD32F470V-START 开发板（512K Flash / 256K RAM，Cortex-M4F）上。
+VelaGate 是一个基于 openvela（NuttX 系 RTOS）的语音控制智能网关，运行在 GD32F470ZE MCU 开发板（512K Flash / 256K RAM，Cortex-M4F）上。
 
 系统采用多级协同架构：
 
@@ -23,13 +23,13 @@ openvela 主控侧亮点：
 
 ## 二、选题方向
 
-- **新硬件适配**：完成 GD32F470V-START 开发板的 openvela 板级适配（时钟 240MHz、USART/SPI/GPIO 驱动接入、NSH 控制台、littlefs）。
+- **新硬件适配**：完成 GD32F470ZE MCU 开发板的 openvela 板级适配（时钟 240MHz、USART/SPI/GPIO 驱动接入、NSH 控制台、littlefs）。
 - **AI 硬件产品创新**：在适配好的硬件之上构建语音控制网关这一 AIoT 场景。
 
 ## 三、目录结构
 
 - `app/hifoss/`          — 主控应用：UART 指令解析、ESP8266 AT、OLED 显示（映射到 `packages/demos/contest2026_459_hifoss`）
-- `board/gd32f470v_start/` — GD32F470V-START 板级适配：defconfig、链接脚本、板级初始化与 GPIO 注册（映射到 `vendor/openvela/boards/contest2026_459_gd32f470v_start`）
+- `board/gd32f470v_start/` — GD32F470ZE MCU 板级适配：defconfig、链接脚本、板级初始化与 GPIO 注册（映射到 `vendor/openvela/boards/contest2026_459_gd32f470v_start`）
 - `logs/`                — AI Coding 日志（见 logs/README.md）
 - `contest2026_459_aimizhineng.xml` — repo manifest（含上述 linkfile 映射）
 
