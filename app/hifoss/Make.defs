@@ -1,0 +1,7 @@
+############################################################################
+# packages/demos/contest2026_459_hifoss/Make.defs
+############################################################################
+
+ifneq ($(CONFIG_EXAMPLES_HIFOSS),)
+CONFIGURED_APPS += $(APPDIR)/packages/demos/contest2026_459_hifoss
+endif
