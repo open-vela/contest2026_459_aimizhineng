@@ -1,8 +1,8 @@
-# VelaGate — 基于 openvela 的语音控制智能网关
+# VelaGate — 基于 openvela 的语音交互智能网关
 
 ## 一、作品简介
 
-VelaGate 是一个基于 openvela（NuttX 系 RTOS）的语音控制智能网关，运行在 GD32F470ZE MCU 开发板（512K Flash / 256K RAM，Cortex-M4F）上。
+VelaGate 是一个基于 openvela（NuttX 系 RTOS）的语音交互智能网关，支持**语音设备控制**与**自然语言对话**两大类能力，运行在 GD32F470ZE MCU 开发板（512K Flash / 256K RAM，Cortex-M4F）上。
 
 系统采用多级协同架构：
 
@@ -20,6 +20,7 @@ openvela 主控侧亮点：
 - **UART 指令成帧与 GPIO 控制**：`\n` 即时成帧解析 `+LED`/`-LED`/`+FAN`/`-FAN` 等指令，DWT 周期级计时，节点执行延迟实测平均 337µs
 - **SSD1306 OLED 状态面板**：SPI0 驱动，实时显示系统与外设状态
 - **端到端语音控制链路**：唤醒 → 云端理解 → 设备动作，端到端平均 1540ms
+- **语音对话**：除 LED/风扇等设备控制指令外，支持唤醒后的自然语言问答与多轮对话——云端大模型生成回复，经 WS63 回传后由语音前端 TTS 播报；后台智能体的功能角色可自定义，可作为各类语音对话类产品（家居助手、故事机、学习伙伴等）使用；对话与控制共用同一 UART 指令通道（`+VAD:START`/`+VAD:END` 端点检测界分语句）
 
 ## 二、选题方向
 
@@ -111,6 +112,8 @@ g_recv_length:14 g_recv_buff:+EXIT_WAKEUP
 - `+VAD:START` / `+VAD:END`：语音端点检测（说话开始 / 结束），`vad_start`/`vad_end` 为相对唤醒时刻的毫秒时间戳。
 - `+LED:ON` 等：云端理解后经 WS63 由 UART3 下发的控制指令，hifoss 以 `\n` 即时成帧解析并执行 GPIO 动作（`led: on` 等回显）。
 - `[URC_TIMING]`：基于 DWT 周期计数器的指令执行耗时统计，实测 4 次指令执行延迟 330~345µs，平均 337µs。
+
+注：语音对话场景与上述控制场景走完全相同的链路，差异仅在云端——大模型判定为非设备指令时生成自然语言回复，经 WS63 回传后由语音前端 TTS 播报，主控侧不产生 GPIO 动作。
 
 ## 五、AI Coding 使用说明
 
